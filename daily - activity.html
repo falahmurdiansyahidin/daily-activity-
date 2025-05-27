@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Daily Activity for You</title>
+  <style>
+    body {
+      background: #ffe6f0;
+      font-family: "Comic Sans MS", cursive, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: #fff0f5;
+      padding: 20px;
+      margin-top: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(255, 192, 203, 0.6);
+    }
+
+    h1, p {
+      text-align: center;
+      color: #d63384;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      padding: 10px;
+      border: 2px solid #ffa6c9;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px;
+      background-color: #ff99cc;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #ff66b2;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: #ffe6ea;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 10px;
+      border-left: 5px solid #ff99cc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .delete-btn {
+      background: #ffcccc;
+      color: #900;
+      border: none;
+      border-radius: 6px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .delete-btn:hover {
+      background: #ffaaaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Hi Sayang! Catat Aktivitasmu Hari Ini</h1>
+    <p>Semangat ya! Kamu bisa lihat dan simpan aktivitasmu di sini.</p>
+    <form id="activity-form">
+      <input type="text" id="activity" placeholder="Contoh: Bangun jam 6, sarapan..." required />
+      <button type="submit">Tambah</button>
+    </form>
+    <ul id="activity-list"></ul>
+  </div>
+
+  <script>
+    const form = document.getElementById("activity-form");
+    const list = document.getElementById("activity-list");
+    const activityInput = document.getElementById("activity");
+
+    document.addEventListener("DOMContentLoaded", loadActivities);
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const activity = activityInput.value.trim();
+      if (activity !== "") {
+        addActivity(activity);
+        saveActivity(activity);
+        activityInput.value = "";
+      }
+    });
+
+    function addActivity(activity) {
+      const li = document.createElement("li");
+      li.textContent = activity;
+
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "Hapus";
+      delBtn.classList.add("delete-btn");
+
+      delBtn.onclick = function () {
+        list.removeChild(li);
+        removeActivity(activity);
+      };
+
+      li.appendChild(delBtn);
+      list.appendChild(li);
+    }
+
+    function saveActivity(activity) {
+      let activities = JSON.parse(localStorage.getItem("activities")) || [];
+      activities.push(activity);
+      localStorage.setItem("activities", JSON.stringify(activities));
+    }
+
+    function loadActivities() {
+      let activities = JSON.parse(localStorage.getItem("activities")) || [];
+      activities.forEach(addActivity);
+    }
+
+    function removeActivity(activity) {
+      let activities = JSON.parse(localStorage.getItem("activities")) || [];
+      const index = activities.indexOf(activity);
+      if (index > -1) {
+        activities.splice(index, 1);
+        localStorage.setItem("activities", JSON.stringify(activities));
+      }
+    }
+  </script>
+</body>
+</html>
